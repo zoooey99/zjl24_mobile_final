@@ -5,6 +5,7 @@ import 'package:zjl24_mobile_final/hourly.dart';
 import 'welcome.dart';
 import 'hourly.dart';
 import 'daily.dart';
+import 'other_info.dart';
 //import 'daily.dart';
 
 void main() {
@@ -128,12 +129,7 @@ class _MyMiamiWeatherState extends State<MyMiamiWeather> {
           ? const Center(child: CircularProgressIndicator())
           : error.isNotEmpty
               ? Center(child: Text(error))
-              : <Widget>[
-                  WelcomeScreen(weatherData: hourlyWeatherData),
-                  HourlyScreen(weatherData: hourlyWeatherData),
-                  DailyScreen(weatherData: dailyWeatherData),
-                  const Placeholder(),
-                ][currentPage],
+              : _buildPage(),
       bottomNavigationBar: NavigationBar(
         onDestinationSelected: (int index) {
           setState(() {
@@ -169,5 +165,34 @@ class _MyMiamiWeatherState extends State<MyMiamiWeather> {
         height: 70,
       ),
     );
+  }
+
+  Widget _buildPage() {
+    switch (currentPage) {
+      case 0:
+        return WelcomeScreen(
+          weatherData: hourlyWeatherData,
+          onNavigate: (index) {
+            setState(() {
+              currentPage = index;
+            });
+          },
+        );
+      case 1:
+        return HourlyScreen(weatherData: hourlyWeatherData);
+      case 2:
+        return DailyScreen(weatherData: dailyWeatherData);
+      case 3:
+        return OtherInfoScreen(weatherData: hourlyWeatherData);
+      default:
+        return WelcomeScreen(
+          weatherData: hourlyWeatherData,
+          onNavigate: (index) {
+            setState(() {
+              currentPage = index;
+            });
+          },
+        );
+    }
   }
 }

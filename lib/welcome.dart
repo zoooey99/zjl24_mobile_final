@@ -2,8 +2,13 @@ import 'package:flutter/material.dart';
 
 class WelcomeScreen extends StatelessWidget {
   final Map<String, dynamic>? weatherData;
+  final Function(int) onNavigate;
 
-  const WelcomeScreen({super.key, this.weatherData});
+  const WelcomeScreen({
+    super.key, 
+    this.weatherData,
+    required this.onNavigate,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -128,6 +133,32 @@ class WelcomeScreen extends StatelessWidget {
                           textAlign: TextAlign.center,
                         ),
                       ),
+
+                      const SizedBox(height: 30),
+                      // Navigation Buttons
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          _buildNavButton(
+                            context,
+                            'Hourly',
+                            Icons.schedule,
+                            1,
+                          ),
+                          _buildNavButton(
+                            context,
+                            'Daily',
+                            Icons.calendar_month,
+                            2,
+                          ),
+                          _buildNavButton(
+                            context,
+                            'More Info',
+                            Icons.info_outline,
+                            3,
+                          ),
+                        ],
+                      ),
                     ],
                   ),
                   
@@ -148,6 +179,35 @@ class WelcomeScreen extends StatelessWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildNavButton(BuildContext context, String label, IconData icon, int index) {
+    return ElevatedButton(
+      onPressed: () => onNavigate(index),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.white.withAlpha(204),
+        foregroundColor: const Color(0xFF1E90FF),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
+        elevation: 2,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 24),
+          const SizedBox(height: 4),
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
       ),
     );
   }
