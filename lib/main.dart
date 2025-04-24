@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:zjl24_mobile_final/hourly.dart';
 import 'welcome.dart';
-//import 'hourly.dart';
+import 'hourly.dart';
 //import 'daily.dart';
 
 void main() {
@@ -23,7 +24,6 @@ class MiamiWeather extends StatelessWidget {
           primary: const Color(0xFF1E90FF),   // Royal blue
           secondary: const Color(0xFFFF8C00), // Dark orange
           surface: Colors.white,
-          background: const Color(0xFFF5F5F5),
         ),
         useMaterial3: true,
         fontFamily: 'Roboto',
@@ -119,7 +119,7 @@ class _MyMiamiWeatherState extends State<MyMiamiWeather> {
               ? Center(child: Text(error))
               : <Widget>[
                   WelcomeScreen(weatherData: weatherData),
-                  const Placeholder(),
+                  HourlyScreen(weatherData: weatherData),
                   const Placeholder(),
                   const Placeholder(),
                 ][currentPage],
