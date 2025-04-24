@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:zjl24_mobile_final/hourly.dart';
 import 'welcome.dart';
 import 'hourly.dart';
+import 'daily.dart';
 //import 'daily.dart';
 
 void main() {
@@ -43,7 +44,8 @@ class MyMiamiWeather extends StatefulWidget {
 
 class _MyMiamiWeatherState extends State<MyMiamiWeather> {
   int currentPage = 0;
-  Map<String, dynamic>? weatherData;
+  Map<String, dynamic>? hourlyWeatherData;
+  Map<String, dynamic>? dailyWeatherData;
   bool isLoading = true;
   String error = '';
 
@@ -67,20 +69,29 @@ class _MyMiamiWeatherState extends State<MyMiamiWeather> {
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         final hourlyForecastUrl = data['properties']['forecastHourly'];
+        final dailyForecastUrl = data['properties']['forecast'];
         
+        // Fetch hourly forecast
         final hourlyResponse = await http.get(
           Uri.parse(hourlyForecastUrl),
           headers: {'User-Agent': userAgent},
         );
 
-        if (hourlyResponse.statusCode == 200) {
+        // Fetch daily forecast
+        final dailyResponse = await http.get(
+          Uri.parse(dailyForecastUrl),
+          headers: {'User-Agent': userAgent},
+        );
+
+        if (hourlyResponse.statusCode == 200 && dailyResponse.statusCode == 200) {
           setState(() {
-            weatherData = json.decode(hourlyResponse.body);
+            hourlyWeatherData = json.decode(hourlyResponse.body);
+            dailyWeatherData = json.decode(dailyResponse.body);
             isLoading = false;
           });
         } else {
           setState(() {
-            error = 'Failed to load hourly forecast';
+            error = 'Failed to load forecast data';
             isLoading = false;
           });
         }
@@ -118,9 +129,9 @@ class _MyMiamiWeatherState extends State<MyMiamiWeather> {
           : error.isNotEmpty
               ? Center(child: Text(error))
               : <Widget>[
-                  WelcomeScreen(weatherData: weatherData),
-                  HourlyScreen(weatherData: weatherData),
-                  const Placeholder(),
+                  WelcomeScreen(weatherData: hourlyWeatherData),
+                  HourlyScreen(weatherData: hourlyWeatherData),
+                  DailyScreen(weatherData: dailyWeatherData),
                   const Placeholder(),
                 ][currentPage],
       bottomNavigationBar: NavigationBar(
@@ -140,7 +151,7 @@ class _MyMiamiWeatherState extends State<MyMiamiWeather> {
           ),
           NavigationDestination(
             icon: Icon(Icons.calendar_month),
-            label: "10 Day",
+            label: "7 Day",
           ),
           NavigationDestination(
             icon: Icon(Icons.water_drop),
